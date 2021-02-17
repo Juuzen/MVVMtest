@@ -6,10 +6,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import com.juuzen.forecastmvvm.data.WeatherStackAPIService
+import com.juuzen.forecastmvvm.data.network.ConnectivityInterceptorImpl
+import com.juuzen.forecastmvvm.data.network.WeatherNetworkDataSource
+import com.juuzen.forecastmvvm.data.network.WeatherNetworkDataSourceImpl
 import com.juuzen.forecastmvvm.databinding.CurrentWeatherFragmentBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 
 class CurrentWeatherFragment : Fragment() {
@@ -26,7 +31,7 @@ class CurrentWeatherFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = CurrentWeatherFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -36,10 +41,16 @@ class CurrentWeatherFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(CurrentWeatherViewModel::class.java)
         // TODO: Use the ViewModel
 
-        val apiService = WeatherStackAPIService()
+        val apiService = WeatherStackAPIService(ConnectivityInterceptorImpl(this.requireContext()))
+        val weatherNetworkDataSource = WeatherNetworkDataSourceImpl(apiService)
+
+        weatherNetworkDataSource.downloadedCurrentWeather.observe(viewLifecycleOwner, Observer {
+            binding.currentWeatherTextView.text = it.toString()
+        })
+
+
         GlobalScope.launch(Dispatchers.Main) {
-            val currentWeatherResponse = apiService.getCurrentWeather("London")
-            binding.currentWeatherTextView.text = currentWeatherResponse.currentWeatherEntry.toString()
+            weatherNetworkDataSource.fetchCurrentWeather("Naples")
         }
     }
 

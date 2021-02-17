@@ -1,5 +1,7 @@
 package com.juuzen.forecastmvvm.data
 
+import com.juuzen.forecastmvvm.data.network.ConnectivityInterceptor
+import com.juuzen.forecastmvvm.data.network.ConnectivityInterceptorImpl
 import com.juuzen.forecastmvvm.data.network.response.CurrentWeatherResponse
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -19,8 +21,11 @@ interface WeatherStackAPIService {
         ) : CurrentWeatherResponse
 
     companion object {
-        operator fun invoke() : WeatherStackAPIService {
-            val requestInterceptor = Interceptor { chain ->  
+        operator fun invoke(
+                connectivityInterceptor: ConnectivityInterceptor
+        ) : WeatherStackAPIService {
+            val requestInterceptor = Interceptor { chain ->
+
                 val url = chain.request()
                         .url()
                         .newBuilder()
@@ -37,6 +42,7 @@ interface WeatherStackAPIService {
 
             val okHttpClient = OkHttpClient.Builder()
                     .addInterceptor(requestInterceptor)
+                    .addInterceptor(connectivityInterceptor)
                     .build()
 
             return Retrofit.Builder()
