@@ -1,5 +1,6 @@
 package com.juuzen.forecastmvvm.data.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.juuzen.forecastmvvm.data.db.dao.CurrentWeatherDao
 import com.juuzen.forecastmvvm.data.db.entity.CurrentWeatherEntry
@@ -10,6 +11,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.threeten.bp.ZonedDateTime
+
+private const val TAG = "ForecastRepositoryImpl"
 
 class ForecastRepositoryImpl(
     private val currentWeatherDao : CurrentWeatherDao,
@@ -24,6 +27,7 @@ class ForecastRepositoryImpl(
 
     override suspend fun getCurrentWeather(): LiveData<CurrentWeatherEntry> {
         return withContext(Dispatchers.IO) {
+            initWeatherData()
             return@withContext currentWeatherDao.getWeather()
         }
     }

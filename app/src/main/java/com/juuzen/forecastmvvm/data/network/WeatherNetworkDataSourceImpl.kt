@@ -7,6 +7,8 @@ import com.juuzen.forecastmvvm.data.WeatherStackAPIService
 import com.juuzen.forecastmvvm.data.network.response.CurrentWeatherResponse
 import com.juuzen.forecastmvvm.utils.NoConnectivityException
 
+private const val TAG = "WeatherNetworkDataSourc"
+
 class WeatherNetworkDataSourceImpl(
         private val weatherStackAPIService : WeatherStackAPIService
 ) : WeatherNetworkDataSource {

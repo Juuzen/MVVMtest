@@ -1,10 +1,12 @@
 package com.juuzen.forecastmvvm.data
 
+import android.util.Log
 import com.juuzen.forecastmvvm.data.network.ConnectivityInterceptor
 import com.juuzen.forecastmvvm.data.network.ConnectivityInterceptorImpl
 import com.juuzen.forecastmvvm.data.network.response.CurrentWeatherResponse
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
@@ -26,8 +28,7 @@ interface WeatherStackAPIService {
         ) : WeatherStackAPIService {
             val requestInterceptor = Interceptor { chain ->
 
-                val url = chain.request()
-                        .url()
+                val url = chain.request().url
                         .newBuilder()
                         .addQueryParameter("access_key", KEY)
                         .build()
@@ -40,9 +41,12 @@ interface WeatherStackAPIService {
                 return@Interceptor chain.proceed(request)
             }
 
+            val loggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+
             val okHttpClient = OkHttpClient.Builder()
-                    .addInterceptor(requestInterceptor)
-                    .addInterceptor(connectivityInterceptor)
+                .addInterceptor(loggingInterceptor)
+                .addInterceptor(requestInterceptor)
+                .addInterceptor(connectivityInterceptor)
                     .build()
 
             return Retrofit.Builder()
