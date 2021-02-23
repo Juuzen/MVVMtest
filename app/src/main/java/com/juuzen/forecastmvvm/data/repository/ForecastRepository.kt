@@ -4,5 +4,5 @@ import androidx.lifecycle.LiveData
 import com.juuzen.forecastmvvm.data.db.entity.CurrentWeatherEntry
 
 interface ForecastRepository {
-    suspend fun getCurrentWeather() : LiveData<CurrentWeatherEntry>
+    suspend fun getCurrentWeather(unitCode: String) : LiveData<CurrentWeatherEntry>
 }

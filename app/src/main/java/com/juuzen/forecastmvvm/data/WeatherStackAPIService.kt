@@ -17,9 +17,11 @@ const val BASEURL : String = "http://api.weatherstack.com/"
 
 interface WeatherStackAPIService {
 
+    //TODO: getting the unit system from settings
     @GET("current")
     suspend fun getCurrentWeather(
             @Query("query") location : String,
+            @Query("units") unitCode : String
         ) : CurrentWeatherResponse
 
     companion object {

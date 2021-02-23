@@ -70,8 +70,7 @@ class CurrentWeatherFragment : ScopedFragment(), DIAware {
     }
 
     private fun chooseLocalizedUnitAbbreviation(metric: String, imperial: String) : String {
-//        return if (viewModel.isMetric) metric else imperial
-        return metric
+        return if (viewModel.isMetric) metric else imperial
     }
 
 
